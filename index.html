@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Presentes - Breno e Danyella</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variáveis CSS baseadas no estilo do cartão */
+        :root {
+            --primary-color: #556b2f; /* Verde oliva escuro (cor da folhagem) */
+            --secondary-color: #333333; /* Cinza escuro/preto dos títulos */
+            --text-body: #555555; /* Cinza do corpo do texto */
+            --background-light: #fefcf9; /* Fundo creme/off-white do cartão */
+            --border-light: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light); 
+            color: var(--text-body);
+            text-align: center;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Simulação da folhagem nos cantos */
+        .decoration-frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Para não interferir nos cliques */
+            z-index: -1;
+        }
+        .decoration-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Placeholder para a imagem de folhagem do convite */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="10" y="20" font-size="10" fill="%23556b2f" opacity="0.6">🌿</text><text x="80" y="90" font-size="10" fill="%23556b2f" opacity="0.6">🌿</text><text x="10" y="90" font-size="10" fill="%23556b2f" opacity="0.6">🌿</text><text x="80" y="20" font-size="10" fill="%23556b2f" opacity="0.6">🌿</text></svg>');
+            background-repeat: no-repeat;
+            background-size: 200px;
+            background-position: 5px 5px, calc(100% - 5px) 5px, 5px calc(100% - 5px), calc(100% - 5px) calc(100% - 5px);
+            opacity: 0.8;
+        }
+        
+        header {
+            background: none;
+            padding: 40px 0 20px 0;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5em;
+            margin: 0;
+            color: var(--secondary-color);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            color: var(--secondary-color);
+            font-weight: 400;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        h2.subtitle {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-color: rgba(255, 255, 255, 0.7); /* Fundo sutil */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            flex-grow: 1;
+        }
+
+        h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2em;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .intro-text {
+            font-size: 1em;
+            margin-bottom: 30px;
+            color: var(--text-body);
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .gift-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 12px;
+        }
+
+        .gift-list li {
+            background-color: var(--background-light);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1em;
+            color: var(--text-body);
+            transition: all 0.2s ease;
+        }
+
+        .gift-list li:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(85, 107, 47, 0.1);
+        }
+
+        .item-name {
+            flex-grow: 1;
+            font-weight: 400;
+        }
+
+        .status-button {
+            padding: 6px 12px;
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background-color: transparent; 
+            color: var(--primary-color);
+            text-transform: uppercase;
+        }
+
+        .status-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .status-button.claimed {
+            background-color: var(--secondary-color); /* Cinza escuro para Comprado */
+            border-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .status-button.claimed:hover {
+            background-color: #555;
+            border-color: #555;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            color: var(--text-body);
+            font-size: 0.9em;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        /* Ajustes para mobile */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            h2 { font-size: 1.1em; }
+            h3 { font-size: 1.5em; }
+            .gift-list { grid-template-columns: 1fr; }
+            .status-button { min-width: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="decoration-frame"></div>
+    
+    <header>
+        <h1>BRENO</h1>
+        <h1>E</h1>
+        <h1>DANYELLA</h1>
+        <h2 class="subtitle">NOSSA LISTA DE CHÁ DE PANELA</h2>
+    </header>
+
+    <div class="container">
+        <h3>Com Carinho, Para o Novo Lar!</h3>
+        <p class="intro-text">Estamos muito felizes em celebrar este momento especial com vocês! Sua presença já é o maior presente, mas se quiserem nos ajudar a montar nossa casinha, aqui está uma lista do que precisamos.</p>
+        <p class="intro-text">Ao escolher um item, por favor, **entre em contato conosco** para avisar e evitar duplicidades. A marcação no site é apenas uma simulação para ajudar na sua escolha.</p>
+
+        <ul class="gift-list">
+            <li><span class="item-name">Multiprocessador</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Air fryer</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Fogão</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Geladeira</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Forno</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Liquidificador</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de panelas</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Panela de pressão</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de pratos</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de talheres</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Mixer</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de copos</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de colher de silicone</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de facas</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de formas</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de marinex</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de travessa</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de porta temperos</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Sapateira</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de tapetes</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jogo de potes herméticos (mantimentos)</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Peneira</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Tapuqueira</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Cuscuzeira</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Ralador</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Kit de ferramentas</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Cesto de roupas</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Aparelho de despensa</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Cestos organizadores de cozinha</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Escorredor multifuncional</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Tapete de sola</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Escorredor de pratos</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Saleiro</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Cafeteira</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Filtro de barro</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Kit de pia</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Garrafa de café</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Jarros de vidro</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Kit de xícaras</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Sanduicheira</span> <button class="status-button">Disponível</button></li>
+            <li><span class="item-name">Chaleira elétrica</span> <button class="status-button">Disponível</button></li>
+        </ul>
+    </div>
+
+    <footer>
+        <p>Agradecemos de coração! Com amor, Breno e Danyella.</p>
+    </footer>
+
+    <script>
+        // Script simples para simular a marcação de um item
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.status-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.textContent === 'Disponível') {
+                        button.textContent = 'Comprado';
+                        button.classList.add('claimed');
+                    } else {
+                        button.textContent = 'Disponível';
+                        button.classList.remove('claimed');
+                    }
+
+                    alert("🎉 Item marcado! Lembre-se que essa marcação é local no seu navegador. Por favor, entre em contato com os noivos para confirmar o presente e evitar duplicidades. Muito obrigado!");
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
