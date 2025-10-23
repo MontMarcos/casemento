@@ -1,37 +1,46 @@
 # route.py
 
 from flask import Flask, request, redirect, url_for
-from controller.aplication import Aplication # Importa sua classe OO
+from controller.aplication import Aplication 
+from db.db_connector import GiftRepository 
+import os
+from dotenv import load_dotenv
 
-# 🚨 Configura o Flask para procurar templates na pasta 'views'
-app = Flask(__name__, template_folder='views') 
+# -----------------------------------------------------
+# CONFIGURAÇÃO E INICIALIZAÇÃO
+# -----------------------------------------------------
 
-# Instancia a classe que gerencia a lógica
+load_dotenv()
+
+# 🚨 ÚNICA INSTANCIAÇÃO DO REPOSITÓRIO (DAL) 🚨
+# Esta linha executa o __init__ do GiftRepository, que faz o setup do DB
+repo = GiftRepository() 
+
+app = Flask(__name__, template_folder='views')
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "chave-secreta-default")
+
+# Instancia a classe de Controller (POO)
 aplication = Aplication()
 
 # -----------------------------------------------------
-# ROTEAMENTO HTTP (GET e POST)
+# ROTEAMENTO HTTP (SOMENTE INFORMAÇÃO DE ROTAS)
 # -----------------------------------------------------
 
-# 1. Rota Principal (GET): Exibe a Lista de Presentes
 @app.route('/', methods=['GET'])
 def inicio():
-    # Chama o método render da sua classe, que retorna o template
+    """Mapeia a URL '/' para a função de renderização do Controller."""
     return aplication.render('casamento')
 
-# 2. Rota de Ação (POST): Marca um presente como comprado
 @app.route('/comprar', methods=['POST'])
 def comprar():
-    # Obtém o ID do presente enviado pelo formulário HTML
+    """Mapeia a URL '/comprar' para a função de ação do Controller."""
     gift_id = request.form.get('gift_id')
     
     if gift_id:
-        # Chama o método OO para persistir a mudança
         aplication.mark_gift_as_bought(gift_id)
     
-    # Redireciona o usuário de volta para a página inicial (evita reenvio do POST)
     return redirect(url_for('inicio'))
 
 if __name__ == '__main__':
-    # Roda o servidor no modo DEBUG (recarrega automático e mostra erros no navegador)
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    # Execute com 'python route.py'
+    app.run(host='0.0.0.0', port=8080, debug=True)

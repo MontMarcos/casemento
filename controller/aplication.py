@@ -1,15 +1,15 @@
 # controller/aplication.py
 
-import json
 from flask import render_template, request, redirect, url_for
-from pathlib import Path 
+from db.db_connector import GiftRepository 
 
-# Define o caminho seguro do arquivo JSON a partir da localização do controller
-GIFTS_DB_PATH = Path(__file__).parent.parent / 'db' / 'gifts.json'
+# Instancia o Repositório, que já carrega o DB no construtor
+repo = GiftRepository() 
 
 class Aplication:
     """
-    Classe de Lógica (Controller): Gerencia o conteúdo e a persistência dos dados.
+    Classe de Lógica de Negócio (Controller).
+    Gerencia a interação entre a View e o Repositório de Dados.
     """
     def __init__(self):
         self.pages = {
@@ -17,51 +17,26 @@ class Aplication:
         }
 
     def render(self, page):
-        # Despacho: Se não encontrar, usa render_casamento como fallback
         content_function = self.pages.get(page, self.render_casamento)
         return content_function()
-    
-    # -----------------------------------------------------
-    # Lógica de Persistência (Métodos de acesso ao JSON)
-    # -----------------------------------------------------
-    
-    def get_gift_list(self):
-        """Lê a lista de presentes do arquivo JSON."""
-        try:
-            with open(GIFTS_DB_PATH, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            print(f"ERRO CRÍTICO: Arquivo DB não encontrado em: {GIFTS_DB_PATH}")
-            return [] # Retorna lista vazia para evitar crash
 
-    def save_gift_list(self, gifts):
-        """Salva a lista atualizada de presentes no arquivo JSON."""
-        with open(GIFTS_DB_PATH, 'w', encoding='utf-8') as f:
-            json.dump(gifts, f, indent=4, ensure_ascii=False)
+    # -----------------------------------------------------
+    # MÉTODOS DE NEGÓCIO (Usando o Repositório)
+    # -----------------------------------------------------
+
+    def get_gift_list(self):
+        """Busca todos os presentes usando a camada de repositório."""
+        return repo.get_all_gifts()
 
     def mark_gift_as_bought(self, gift_id):
-        """Marca um presente como comprado e salva no JSON."""
-        gifts = self.get_gift_list()
-        
+        """Marca um presente como comprado usando a camada de repositório."""
         try:
-            gift_id = int(gift_id)
+            return repo.mark_gift_as_bought(int(gift_id))
         except ValueError:
-            return False 
-
-        found = False
-        for gift in gifts:
-            if gift.get('id') == gift_id:
-                gift['comprado'] = True
-                found = True
-                break
-        
-        if found:
-            self.save_gift_list(gifts)
-            return True
-        return False
+            return False
     
     # -----------------------------------------------------
-    # Lógica de Renderização
+    # MÉTODOS DE RENDERIZAÇÃO
     # -----------------------------------------------------
 
     def render_casamento(self):
