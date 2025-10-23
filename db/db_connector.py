@@ -42,25 +42,25 @@ class GiftRepository:
         ("Jogo de Talheres", False)
     ]
     
-def __init__(self):
-        # 1. Tenta obter a URL completa (Padrão de Nuvem, ex: Render)
-        self.DATABASE_URL = os.getenv("DATABASE_URL")
-        
-        if self.DATABASE_URL:
-            # Psycopg2 usa 'dsn' para a string de conexão completa
-            self.db_params = {'dsn': self.DATABASE_URL}
-        else:
-            # 2. Se a URL não existir, usa as variáveis separadas (Fallback)
-            self.db_params = {
-                "dbname": os.getenv("DB_NAME", "casamento_db_1me1"), # Usar o nome do DB
-                "user": os.getenv("DB_USER", "renderuser"),
-                "password": os.getenv("DB_PASS", None),
-                "host": os.getenv("DB_HOST", "localhost"),
-                "port": os.getenv("DB_PORT", "5432")
-            }
+    def __init__(self):
+            # 1. Tenta obter a URL completa (Padrão de Nuvem, ex: Render)
+            self.DATABASE_URL = os.getenv("DATABASE_URL")
+            
+            if self.DATABASE_URL:
+                # Psycopg2 usa 'dsn' para a string de conexão completa
+                self.db_params = {'dsn': self.DATABASE_URL}
+            else:
+                # 2. Se a URL não existir, usa as variáveis separadas (Fallback)
+                self.db_params = {
+                    "dbname": os.getenv("DB_NAME", "casamento_db_1me1"), # Usar o nome do DB
+                    "user": os.getenv("DB_USER", "renderuser"),
+                    "password": os.getenv("DB_PASS", None),
+                    "host": os.getenv("DB_HOST", "localhost"),
+                    "port": os.getenv("DB_PORT", "5432")
+                }
 
-        self.ensure_tables_exist()
-        self.initialize_data()
+            self.ensure_tables_exist()
+            self.initialize_data()
 
     # ... (métodos de conexão e get_cursor permanecem iguais) ...
     def _get_connection(self):
