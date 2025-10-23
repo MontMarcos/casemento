@@ -6,72 +6,62 @@ from typing import Dict, Any, List, Tuple
 from dotenv import load_dotenv 
 from contextlib import contextmanager
 
-# Carrega as variáveis de ambiente do arquivo .env
+# Carrega as variáveis de ambiente do arquivo .env (somente para uso local)
 load_dotenv()
 
 class GiftRepository:
     """
-    Classe de Repositório (DAL). Gerencia o acesso ao PostgreSQL.
+    CLASSE DE REPOSITÓRIO (DAL): Gerencia o acesso ao PostgreSQL.
     """
     
     # -----------------------------------------------------
     # DADOS INICIAIS DO PROJETO (Estrutura: nome, comprado_boolean)
     # -----------------------------------------------------
     INITIAL_GIFTS = [
-        ("Escorredor de Pratos", False),
-        ("Cafeteira", False),
-        ("Filtro de Barro", False),
-        ("Garrafa de Café", False),
-        ("Jarro de Vidro", False),
-        ("Kit de Xícaras", False),
-        ("Sanduicheira", False),
-        ("Chaleira Elétrica", False),
-        ("Jogo de Copos", False),
-        ("Jogo de Colheres de Silicone", False),
-        ("Jogo de Facas", False),
-        ("Jogo de Formas", False),
-        ("Jogo de Marinex", False),
-        ("Jogo de Vasilhas", False),
-        ("Jogo de Porta Temperos Multifuncional", False),
-        ("Cesto Organizador de Cozinha", False),
-        ("Cortador Multifuncional", False),
-        ("Liquidificador", False),
-        ("Jogo de Panelas", False),
-        ("Panela de Pressão", False),
-        ("Jogo de Pratos", False),
+        ("Escorredor de Pratos", False), ("Cafeteira", False), ("Filtro de Barro", False),
+        ("Garrafa de Café", False), ("Jarro de Vidro", False), ("Kit de Xícaras", False),
+        ("Sanduicheira", False), ("Chaleira Elétrica", False), ("Jogo de Copos", False),
+        ("Jogo de Colheres de Silicone", False), ("Jogo de Facas", False), ("Jogo de Formas", False),
+        ("Jogo de Marinex", False), ("Jogo de Vasilhas", False), ("Jogo de Porta Temperos Multifuncional", False),
+        ("Cesto Organizador de Cozinha", False), ("Cortador Multifuncional", False), ("Liquidificador", False),
+        ("Jogo de Panelas", False), ("Panela de Pressão", False), ("Jogo de Pratos", False),
         ("Jogo de Talheres", False)
     ]
     
     def __init__(self):
-            # 1. Tenta obter a URL completa (Padrão de Nuvem, ex: Render)
-            self.DATABASE_URL = os.getenv("DATABASE_URL")
-            
-            if self.DATABASE_URL:
-                # Psycopg2 usa 'dsn' para a string de conexão completa
-                self.db_params = {'dsn': self.DATABASE_URL}
-            else:
-                # 2. Se a URL não existir, usa as variáveis separadas (Fallback)
-                self.db_params = {
-                    "dbname": os.getenv("DB_NAME", "casamento_db_1me1"), # Usar o nome do DB
-                    "user": os.getenv("DB_USER", "renderuser"),
-                    "password": os.getenv("DB_PASS", None),
-                    "host": os.getenv("DB_HOST", "localhost"),
-                    "port": os.getenv("DB_PORT", "5432")
-                }
+        # 🚨 SOLUÇÃO DE DEPLOY: Prioriza a URL COMPLETA injetada pelo Render
+        self.DATABASE_URL = os.getenv("DATABASE_URL")
+        
+        if self.DATABASE_URL:
+            # MÉTODO 1 (PRODUÇÃO): Se a URL existe, usa-a como DSN (Data Source Name)
+            self.db_params = {'dsn': self.DATABASE_URL}
+        else:
+            # MÉTODO 2 (FALLBACK LOCAL): Usa variáveis separadas (para testar na sua máquina)
+            self.db_params = {
+                # O DB_NAME fallback é 'postgres' para evitar o erro de DB que não existe
+                "dbname": os.getenv("DB_NAME", "postgres"), 
+                "user": os.getenv("DB_USER", "postgres"),
+                "password": os.getenv("DB_PASS", None),
+                "host": os.getenv("DB_HOST", "localhost"),
+                "port": os.getenv("DB_PORT", "5432")
+            }
 
-            self.ensure_tables_exist()
-            self.initialize_data()
+        self.ensure_tables_exist()
+        self.initialize_data()
 
-    # ... (métodos de conexão e get_cursor permanecem iguais) ...
     def _get_connection(self):
+        """Estabelece e retorna uma conexão bruta."""
         try:
             return psycopg2.connect(**self.db_params)
         except Exception as e:
-            print(f"ERRO CRÍTICO: Falha de conexão com o Banco de Dados. Erro: {e}")
+            # Esta mensagem aparecerá nos Logs do Render em caso de falha
+            print(f"ERRO CRÍTICO: Falha de conexão com o Banco de Dados.")
+            print(f"Parâmetros usados: {self.db_params}")
             raise 
 
     @contextmanager
     def get_cursor(self, commit: bool = False):
+        """Gerencia a conexão e o cursor usando um contexto."""
         conn = None
         try:
             conn = self._get_connection()
@@ -89,11 +79,11 @@ class GiftRepository:
                 conn.close()
 
     def ensure_tables_exist(self):
-        """Cria a tabela 'gifts' (AGORA SEM O LINK) e força o reset se o esquema mudar."""
+        """Cria a tabela 'gifts' (DROP table é obrigatório para resetar o esquema)"""
         try:
             with self.get_cursor(commit=True) as cur:
-                # 🚨 DROP TABLE NECESSÁRIO PARA GARANTIR O NOVO ESQUEMA SEM 'link'
                 cur.execute("""
+                    -- Isso garante que a tabela seja criada com o esquema correto
                     DROP TABLE IF EXISTS gifts;
                     
                     CREATE TABLE gifts (
@@ -104,6 +94,7 @@ class GiftRepository:
                 """)
         except Exception as e:
             print(f"Erro ao criar tabela 'gifts': {e}")
+            raise 
 
     def initialize_data(self):
         """Insere os dados iniciais SE a tabela estiver vazia."""
@@ -123,13 +114,10 @@ class GiftRepository:
             
         except Exception as e:
             print(f"ERRO: Falha ao inicializar dados no DB: {e}")
-    
-    # -----------------------------------------------------
-    # MÉTODOS DE OPERAÇÃO DO REPOSITÓRIO (DAL)
-    # -----------------------------------------------------
+            raise
     
     def get_all_gifts(self) -> List[Dict[str, Any]]:
-        """Recupera todos os presentes (query sem 'link')."""
+        """Recupera todos os presentes."""
         query = "SELECT id, nome, comprado FROM gifts ORDER BY id;"
         
         try:
@@ -154,8 +142,7 @@ class GiftRepository:
             return False
 
     def insert_initial_gifts(self, gifts_data: List[Tuple]) -> None:
-        """Insere dados iniciais no banco de dados (SQL ajustado para 2 parâmetros)."""
-        # 🚨 SQL AJUSTADO: Valores apenas para 'nome' e 'comprado'
+        """Insere dados iniciais no banco de dados."""
         query = """
             INSERT INTO gifts (nome, comprado) 
             VALUES (%s, %s) 
