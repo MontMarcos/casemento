@@ -6,25 +6,14 @@ from db.db_connector import GiftRepository
 import os
 from dotenv import load_dotenv
 
-# -----------------------------------------------------
-# CONFIGURAÇÃO E INICIALIZAÇÃO
-# -----------------------------------------------------
-
 load_dotenv()
 
-# 🚨 ÚNICA INSTANCIAÇÃO DO REPOSITÓRIO (DAL) 🚨
-# Esta linha executa o __init__ do GiftRepository, que faz o setup do DB
 repo = GiftRepository() 
 
 app = Flask(__name__, template_folder='views')
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "chave-secreta-default")
 
-# Instancia a classe de Controller (POO)
 aplication = Aplication()
-
-# -----------------------------------------------------
-# ROTEAMENTO HTTP (SOMENTE INFORMAÇÃO DE ROTAS)
-# -----------------------------------------------------
 
 @app.route('/', methods=['GET'])
 def inicio():
@@ -42,5 +31,4 @@ def comprar():
     return redirect(url_for('inicio'))
 
 if __name__ == '__main__':
-    # Execute com 'python route.py'
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8083, debug=True)

@@ -1,4 +1,3 @@
-# db_connector.py
 
 import psycopg2
 import os
@@ -6,7 +5,6 @@ from typing import Dict, Any, List, Tuple
 from dotenv import load_dotenv 
 from contextlib import contextmanager
 
-# Carrega as variáveis de ambiente do arquivo .env (somente para uso local)
 load_dotenv()
 
 class GiftRepository:
@@ -14,9 +12,7 @@ class GiftRepository:
     CLASSE DE REPOSITÓRIO (DAL): Gerencia o acesso ao PostgreSQL.
     """
     
-    # -----------------------------------------------------
-    # DADOS INICIAIS DO PROJETO (Estrutura: nome, comprado_boolean)
-    # -----------------------------------------------------
+  
     INITIAL_GIFTS = [
         ("Escorredor de Pratos", False), ("Cafeteira", False), ("Filtro de Barro", False),
         ("Garrafa de Café", False), ("Jarro de Vidro", False), ("Kit de Xícaras", False),
@@ -25,20 +21,20 @@ class GiftRepository:
         ("Jogo de Marinex", False), ("Jogo de Vasilhas", False), ("Jogo de Porta Temperos Multifuncional", False),
         ("Cesto Organizador de Cozinha", False), ("Cortador Multifuncional", False), ("Liquidificador", False),
         ("Jogo de Panelas", False), ("Panela de Pressão", False), ("Jogo de Pratos", False),
-        ("Jogo de Talheres", False)
+        ("Jogo de Talheres", False),
+        ("Kit de Bowls", False), ("Sanduicheira com Grill", False), ("Kit Organizador de Geladeira", False),
+        ("Mixer", False), ("Kit de Utensílios de Cozinha", False), ("Kit de Mantimentos Hermético", False),
+        ("Kit de Vasilha de Vidro", False)
     ]
+
     
     def __init__(self):
-        # 🚨 SOLUÇÃO DE DEPLOY: Prioriza a URL COMPLETA injetada pelo Render
         self.DATABASE_URL = os.getenv("DATABASE_URL")
         
         if self.DATABASE_URL:
-            # MÉTODO 1 (PRODUÇÃO): Se a URL existe, usa-a como DSN (Data Source Name)
             self.db_params = {'dsn': self.DATABASE_URL}
         else:
-            # MÉTODO 2 (FALLBACK LOCAL): Usa variáveis separadas (para testar na sua máquina)
             self.db_params = {
-                # O DB_NAME fallback é 'postgres' para evitar o erro de DB que não existe
                 "dbname": os.getenv("DB_NAME", "postgres"), 
                 "user": os.getenv("DB_USER", "postgres"),
                 "password": os.getenv("DB_PASS", None),
@@ -54,7 +50,6 @@ class GiftRepository:
         try:
             return psycopg2.connect(**self.db_params)
         except Exception as e:
-            # Esta mensagem aparecerá nos Logs do Render em caso de falha
             print(f"ERRO CRÍTICO: Falha de conexão com o Banco de Dados.")
             print(f"Parâmetros usados: {self.db_params}")
             raise 

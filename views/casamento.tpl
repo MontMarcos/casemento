@@ -23,7 +23,7 @@
         <h3>Com Carinho, Para o Novo Lar!</h3>
         <p class="intro-text">Estamos muito felizes em celebrar este momento especial com vocês! Sua presença já é o maior presente, mas se quiserem nos ajudar a montar nossa casinha, aqui está uma lista do que precisamos.</p>
         <p class="intro-text">Ao escolher um item, por favor, clique em Comprar para marcá-lo como indisponível e evitar duplicidades.</p>
-        <p> Cores inox, preto ou branco</p>
+        <p> Cores inox, preto ou cinza</p>
         
         <ul class="gift-list">
             {% for item in lista_itens %}

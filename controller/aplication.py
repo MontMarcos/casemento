@@ -1,9 +1,7 @@
-# controller/aplication.py
 
 from flask import render_template, request, redirect, url_for
 from db.db_connector import GiftRepository 
 
-# Instancia o Repositório, que já carrega o DB no construtor
 repo = GiftRepository() 
 
 class Aplication:
@@ -20,9 +18,7 @@ class Aplication:
         content_function = self.pages.get(page, self.render_casamento)
         return content_function()
 
-    # -----------------------------------------------------
-    # MÉTODOS DE NEGÓCIO (Usando o Repositório)
-    # -----------------------------------------------------
+    
 
     def get_gift_list(self):
         """Busca todos os presentes usando a camada de repositório."""
@@ -35,14 +31,8 @@ class Aplication:
         except ValueError:
             return False
     
-    # -----------------------------------------------------
-    # MÉTODOS DE RENDERIZAÇÃO
-    # -----------------------------------------------------
-
     def render_casamento(self):
         """Renderiza a página principal do Casamento."""
         
         presentes = self.get_gift_list()
-        
-        # O nome do template é 'casamento.tpl'
         return render_template('casamento.tpl', lista_itens=presentes)
