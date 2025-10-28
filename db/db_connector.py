@@ -16,7 +16,7 @@ class GiftRepository:
     INITIAL_GIFTS = [
         ("Escorredor de Pratos", False), ("Cafeteira", False), ("Aparelho de jantar", False),
         ("Garrafa de Café", False), ("Jarro de Vidro", False), ("Kit de Caneca", False),
-        ("Chaleira Elétrica", False), ("Jogo de Copos", False),
+        ("Chaleira Elétrica", False), (" ogo de Copos", False),
         ("Jogo de Colheres de Silicone", False), ("Jogo de Facas", False), ("Jogo de Formas", False),
         ("Jogo de Marinex", False), ("Jogo de Vasilhas", False), ("Jogo de Porta Temperos Multifuncional", False),
         ("Cesto Organizador de Cozinha", False), ("Cortador Multifuncional", False), ("Liquidificador", False),

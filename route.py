@@ -1,5 +1,3 @@
-# route.py
-
 from flask import Flask, request, redirect, url_for
 from controller.aplication import Aplication 
 from db.db_connector import GiftRepository 
